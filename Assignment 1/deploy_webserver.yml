@@ -1,0 +1,15 @@
+- hosts: webserver
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: install apache2
+      apt: name=apache2 update_cache=yes state=latest
+
+    - name: copy index.html to server
+      template: src=index.html.j2 dest=/var/www/html/index.html
+      notify:
+        - restart apache2
+
+  handlers:
+    - name: restart apache2
+      service: name=apache2 state=restarted
